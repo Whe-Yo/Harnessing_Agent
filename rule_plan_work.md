@@ -51,6 +51,13 @@
 - [x] Subtask 7.3: README 프로젝트 의의 3축 명문화 (적응형 하네싱 / RPW / n회 안티테제)
 - [x] Subtask 7.4: 도구 자율 선택 원칙 적용 및 예시 병기
 
+### [x] Task 8: 하네싱 프로젝트 추가 개선
+- [x] Subtask 8.1: 페르소나 작업별 유동 조정 (코드→아키텍트, 논문→학술편집자, 데이터→분석가)
+- [x] Subtask 8.2: 날짜 형식 YYMMDD_HHMM으로 통일 (RULES.md, worklog, 템플릿)
+- [x] Subtask 8.3: antithesis n회 에이전트 자율 결정으로 변경, setup에서 사용자에게 n 선호 질문
+- [x] Subtask 8.4: git 커밋 co-author 제거 (includeCoAuthoredBy: false)
+- [x] Subtask 8.5: 일일 업데이트 확인 기능 추가 (boost step 5 + manage 업데이트 절차)
+
 ---
 
 ## Work Log (2026-06-16)
@@ -70,3 +77,9 @@
   * RPW 문서 전체 이모티콘 제거.
 * **Git 관리**:
   * 깃허브 원격 저장소 force push 완료 (GITHUB_PAT 사용).
+
+* **260616_1430 추가 개선**:
+  * 페르소나 작업별 유동 조정, 날짜 형식 YYMMDD_HHMM 통일.
+  * antithesis n회 에이전트 자율 결정, setup에서 사용자 n 선호 질문 추가.
+  * git 커밋 co-author 제거 (includeCoAuthoredBy: false).
+  * boost step 5 + manage 일일 업데이트 확인 절차 추가, 커밋/푸시 완료.
