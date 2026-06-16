@@ -42,8 +42,8 @@
 
 ## 구성 요소
 
-### 지능 재료: 글로벌 규칙셋 ([rules/RULES.md](rules/RULES.md))
-에이전트의 사고·검증·보고 절차를 강제하는 범용 행동 원칙. 프로젝트 룰 파일(CLAUDE.md, GEMINI.md, .cursorrules 등)에 붙여넣어 사용합니다.
+### 지능 재료: 글로벌 규칙셋 ([rules/AGENTS.md](rules/AGENTS.md))
+에이전트의 사고·검증·보고 절차를 강제하는 범용 행동 원칙. 에이전트 룰 파일(AGENTS.md, CLAUDE.md, .cursorrules 등)에 주입하거나, 에이전트 시스템 프롬프트에 붙여넣어 사용합니다.
 
 ### 행동 재료: 스킬 10종 ([skills/](skills/))
 상황에 따라 에이전트가 로드해 자율 수행하는 절차 지침서. 전체 목록은 [`skills/SKILL_INDEX.md`](skills/SKILL_INDEX.md)를 참고합니다.
@@ -61,7 +61,7 @@
 
 ## 적용 방법
 
-1. [`rules/RULES.md`](rules/RULES.md) 내용을 에이전트의 룰 파일에 주입합니다.
+1. [`rules/AGENTS.md`](rules/AGENTS.md) 내용을 에이전트의 룰 파일에 주입합니다.
 2. 에이전트에게 `setup` 스킬을 실행하도록 지시합니다. 이후 스킬 선택·장착·MCP 등록·사용자 설정 확인은 에이전트가 스스로 처리합니다.
 
 > RPW 문서는 프로젝트별로 생성됩니다. 에이전트가 새 프로젝트에서 처음 실행될 때 해당 프로젝트 루트에 자동으로 생성합니다.
