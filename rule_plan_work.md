@@ -23,7 +23,13 @@
 
 ## Plan
 
-목표: 보류 설계 기록 + 버전 관리 + 피드백 채널
+목표: 실증 피드백 반영 (4건) — 하나씩 안티테제 후 적용
+
+- [x] (전제) 성역 log_for_test 예외 명문화 (README·AGENTS 9절)
+- [x] 토대: 에이전트별 state 파일 + boost silent skip 제거 (Item 2·3 통합)
+- [ ] SessionStart 훅으로 boost 강제 트리거 (G1, 진짜 근본 원인) — 사용자 승인 대기 (글로벌 settings.json 수정)
+- [ ] feedback 스킬 v2: log_for_test md 커밋 + 자동화 (동시성·푸시거부·비밀스캔 반영) — 토대 위에서 진행
+- [ ] antithesis 정지 조건: 최대 라운드 상한 + 사용자 중재 (Gemini 1556)
 
 - [x] Harnessing_Agent → please-work-harness 디렉토리·참조·GitHub 원격명 리네임
 - [x] agents_chat.md 프로젝트 내 이동 + gitignore
@@ -39,7 +45,9 @@
 
 ## Work
 
-ROADMAP.md(리소스 예약 원장 보류 설계), CHANGELOG.md + v0.1.0 태그(버전 관리), feedback 스킬 + GitHub 이슈 템플릿(사용 중 피드백 채널) 추가. 스킬 12종. 피드백은 성역 원칙상 저장소 직접 수정 대신 이슈로, 환경별 분기(API 직접/수동 붙여넣기).
+실증 피드백 검토 진행 중. 토대(성역 예외 명문화 + 에이전트별 state 파일 + boost silent-skip 제거) 적용·푸시 완료. SessionStart 훅(boost 강제 트리거)은 글로벌 settings.json 수정이라 사용자 승인 대기. 남은 것: feedback v2(커밋 모델), antithesis 정지 조건. 안티테제 2회로 B-1(룰 파일 경로 박기)·feedback-v1 설계 결함 기각.
+
+이전: ROADMAP.md(리소스 예약 원장 보류 설계), CHANGELOG.md + v0.1.0 태그(버전 관리), feedback 스킬 + GitHub 이슈 템플릿(사용 중 피드백 채널) 추가. 스킬 12종. 피드백은 성역 원칙상 저장소 직접 수정 대신 이슈로, 환경별 분기(API 직접/수동 붙여넣기).
 
 이전: resource 스킬 추가 완료 — 무거운 작업 착수 전 호스트 리소스 라이브 조회·보고(저장 없음, 호스트별 분기). 3차 안티테제로 큐·스코프계층·좀비GC 기각(자기모순·과잉설계), 스냅샷 전용으로 축소. Mac에서 ps 폴백 동작 검증. SKILL_INDEX·README(11종)·Claude 커맨드 동기화.
 
