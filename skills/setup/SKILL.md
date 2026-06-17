@@ -34,12 +34,14 @@ description: 최초 1회 실행. 스킬 인덱스를 읽고 현재 에이전트 
 5. **장착**: 에이전트의 스킬 로드 방식에 따라 선택한 스킬 폴더를 지정 위치에 복사하거나, 에이전트 설정에 등록한다.
    - 에이전트 스킬 폴더가 명확하지 않으면 사용자에게 위치를 확인한다.
 
-6. **상태 파일 초기화**: `~/.agents/harnessing_state.json`을 생성한다. 이후 `boost`·`manage`의 일일 업데이트 확인이 이 파일을 읽는다. 장착 위치(`skillsDir`)를 여기 기록해야 manage가 업데이트 시 경로를 다시 묻지 않는다.
+6. **상태 파일 초기화**: `~/.agents/harnessing_state_{에이전트}.json`을 생성한다 (예: `harnessing_state_claude.json`, `harnessing_state_gemini.json`). **에이전트별 개별 파일**이어야 한다 — 한 머신에서 여러 에이전트가 각자 클론을 가지므로, 단일 공유 파일은 서로 덮어쓴다(클로버).
+   - `~/.agents/`는 프로젝트 무관 전역 위치다. 따라서 setup 세션과 다른 프로젝트 작업 세션에서도 이 파일을 절대경로로 읽어 클론 위치를 알 수 있다 (세션 분리 문제 해결).
+   - `repoPath`에는 **이 에이전트가 클론한 자기 경로**를 적는다.
 
    ```json
    {
      "lastCheck": "YYMMDD_HHMM",
-     "repoPath": "/이 저장소(please-work-harness) 절대경로",
+     "repoPath": "/이 에이전트의 please-work-harness 클론 절대경로",
      "skillsDir": "/스킬을 장착한 위치",
      "skipUntilNext": false
    }
