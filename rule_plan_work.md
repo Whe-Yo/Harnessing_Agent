@@ -29,6 +29,9 @@
 - [x] 토대: 에이전트별 state 파일 + boost silent skip 제거 (Item 2·3 통합)
 - [x] boost 미적용(G1) → 지시 층으로 해결 (글로벌 강제 훅 폐기: 카테고리 오류 + 전 세션 오염). AGENTS 7절·템플릿·CLAUDE.md에 "세션 시작 시 boost 우선" 명시
 - [x] 강제 층 어댑터 생명주기를 manage에 문서화 (치명적 소수만, 제안→승인)
+- [x] 룰 파일명 꼬임 방지: setup 1단계로 "룰 주입"(AGENTS.md 표준 + 예외 블랙리스트 + import 우선 + 결정론적 검증). README 보강. (sentinel 자가검증·전 에이전트 카탈로그 기각)
+- [ ] feedback v2: log_for_test md 커밋 + 자동화
+- [ ] antithesis 정지 조건: 최대 라운드 상한 + 사용자 중재
 - [ ] feedback 스킬 v2: log_for_test md 커밋 + 자동화 (동시성·푸시거부·비밀스캔 반영) — 토대 위에서 진행
 - [ ] antithesis 정지 조건: 최대 라운드 상한 + 사용자 중재 (Gemini 1556)
 
