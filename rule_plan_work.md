@@ -31,11 +31,12 @@
 - [x] AGENTS.md signal density 패스 + WHY 병기 + 9절 치명적 금지 신설
 - [x] RPW 템플릿 WHY·Never do 구체화
 - [x] antithesis 로그 채택 4건 반영(#2·#4·#5·#6), #3은 스냅샷화로 무효 명시
-- [ ] Claude 어댑터 동기화(~/.claude) + 신규 인스턴스 실행 검증 → 커밋/푸시
+- [x] Claude 어댑터 동기화(~/.claude commands) + 강제 층(.env Read deny) 추가
+- [x] 절차 실행 검증: state파일 생성 → manage fetch/감지 체인 동작 확인
 - 제미나이 3대 과제 판정: ① Metrics 블록·③ archive 압축 = 기각(스냅샷 충돌). ② Policy Gate = 범용 스킬 신설 대신 강제 층 어댑터로 흡수.
 
 ---
 
 ## Work
 
-GitHub 원격 저장소명까지 please-work-harness로 리네임 완료, 로컬 remote URL 동기화됨. 2층 구조 명문화 + signal density 패스 + antithesis 버그 4건 반영 완료. 남은 것: Claude 어댑터 동기화와 신규 인스턴스 실행 검증 후 커밋/푸시. 제미나이(안티그래비티)와 agents_chat.md로 교차 협업 중.
+업데이트 5단계 완료. README 2층 모델 + AGENTS.md signal density + RPW 템플릿 WHY/Never do + 버그 4건 + Claude 어댑터 동기화 + 강제 층(.env Read deny). 절차 동작은 state파일→manage fetch 체인으로 실행 검증함. 강제 층 deny 규칙은 스키마 검증 완료, 현재 세션 즉시 활성 여부는 Claude Code 핫리로드 의존(재시작 시 확실). 제미나이(안티그래비티)와 agents_chat.md로 교차 협업 중.
