@@ -5,12 +5,13 @@
 set -u
 
 # 비밀로 간주하는 경로/파일 패턴 (앞뒤 경계로 단어 단위 매칭)
-SECRET_PATH='(^|[^A-Za-z0-9._-])(\.env([./A-Za-z0-9_-]*)?|id_rsa|id_dsa|id_ecdsa|id_ed25519|[A-Za-z0-9._-]+\.(pem|p12|pfx|key))([^A-Za-z0-9]|$)'
+SECRET_PATH='(^|[^A-Za-z0-9._-])(\.env([./A-Za-z0-9_-]*)?|id_rsa|id_dsa|id_ecdsa|id_ed25519|[A-Za-z0-9._-]+\.(pem|p12|pfx))([^A-Za-z0-9]|$)'
 # 경계 비소비형 코어 (Bash 명령 매칭용 — 동사 뒤 공백을 경계로 재사용)
-SECRET_CORE='(\.env([./A-Za-z0-9_-]*)?|id_rsa|id_dsa|id_ecdsa|id_ed25519|[A-Za-z0-9._-]+\.(pem|p12|pfx|key))'
+SECRET_CORE='(\.env([./A-Za-z0-9_-]*)?|id_rsa|id_dsa|id_ecdsa|id_ed25519|[A-Za-z0-9._-]+\.(pem|p12|pfx))'
 SECRET_FILE2='(/\.ssh/|/\.aws/credentials|(^|/)credentials\.(json|ya?ml|env)|(^|/)secrets?\.(json|ya?ml|toml|env))'
 # 비밀 아님(허용): 예시/템플릿 .env
-ALLOW_ENV='\.env\.(example|sample|template|dist|md)'
+# 비밀 아님(허용): 예시/템플릿 .env, TS 타입선언(.env.d.ts), direnv 설정(.envrc)
+ALLOW_ENV='\.env\.(example|sample|template|dist|md|d\.ts)|\.envrc([^A-Za-z0-9]|$)'
 # 파일을 '읽는' 명령(단순 언급·커밋 메시지와 구분하기 위함)
 READ_VERB='(cat|bat|less|more|head|tail|nl|tac|xxd|od|hexdump|strings|nano|vi|vim|view|emacs|open|code|pbcopy|source|\.|cp|rsync|scp|sftp|curl|wget|awk|sed|grep|egrep|fgrep|rg|ag|perl|python|python3|ruby|node|deno|php|dd|tee|gpg|base64|shasum|md5|md5sum|tr)'
 

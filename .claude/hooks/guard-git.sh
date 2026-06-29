@@ -14,8 +14,8 @@ printf '%s' "$cmd" | grep -Eq '(^|[|&;(\`[:space:]])git([[:space:]]|$)' || exit 
 has() { printf '%s' "$cmd" | grep -Eq "$1"; }
 deny() { echo "차단(§9): 파괴적 git — $1. 명시 승인이 필요하다(히스토리 유실 위험). 정말 의도했다면 터미널에서 직접 실행하거나 훅을 일시 비활성화하라. 명령: $cmd" >&2; exit 2; }
 
-# force push (--force / --force-with-lease / -f)
-if has 'git[[:space:]]+([^|&;]*[[:space:]])?push([[:space:]]|$)' && has '(--force([-=a-z]*)?|[[:space:]]-f([[:space:]]|$))'; then deny "force push"; fi
+# force push (--force / -f) — 단 안전한 --force-with-lease / --force-if-includes는 면제(일상검토 260626)
+if has 'git[[:space:]]+([^|&;]*[[:space:]])?push([[:space:]]|$)' && has '(--force|[[:space:]]-f([[:space:]]|$))' && ! has 'force-with-lease|force-if-includes'; then deny "force push(plain)"; fi
 # push +ref (강제 갱신)
 if has 'git[[:space:]]+([^|&;]*[[:space:]])?push' && has 'push[^|&;]*[[:space:]]\+[A-Za-z0-9_./-]'; then deny "push +ref(강제 갱신)"; fi
 # push --mirror
@@ -24,16 +24,10 @@ if has 'git[[:space:]]+([^|&;]*[[:space:]])?push[^|&;]*--mirror'; then deny "pus
 if has 'git[[:space:]]+([^|&;]*[[:space:]])?reset([[:space:]]|$)' && has '[[:space:]]--hard([[:space:]]|$)'; then deny "reset --hard"; fi
 # history rewrite
 if has 'git[[:space:]]+([^|&;]*[[:space:]])?(filter-branch|filter-repo)([[:space:]]|$)'; then deny "history rewrite(filter-branch/repo)"; fi
-# 대화형 rebase(히스토리 재작성) — pull --rebase는 미해당(rebase 단독 토큰만으론 안 막음)
-if has 'git[[:space:]]+([^|&;]*[[:space:]])?rebase([[:space:]]|$)' && has '(-i([[:space:]]|$)|--interactive)'; then deny "rebase -i(히스토리 재작성)"; fi
-# 미추적 파일 삭제 clean -f
-if has 'git[[:space:]]+([^|&;]*[[:space:]])?clean([[:space:]]|$)' && has '[[:space:]]-[A-Za-z]*f'; then deny "clean -f(미추적 파일 삭제)"; fi
-# 미커밋 변경 대량 폐기: checkout/restore의 '.' 타깃 (단일 파일 checkout은 통과)
-if has 'git[[:space:]]+([^|&;]*[[:space:]])?(checkout|restore)[[:space:]]+([^|&;]*[[:space:]])?(--[[:space:]]+)?\.([[:space:]]|$)'; then deny "checkout/restore . (미커밋 변경 폐기)"; fi
-# ref/reflog 파괴
+# ref/reflog 파괴 (히스토리 비가역 손실 — 유지)
 if has 'git[[:space:]]+([^|&;]*[[:space:]])?update-ref[[:space:]]+([^|&;]*[[:space:]])?-d([[:space:]]|$)'; then deny "update-ref -d(ref 삭제)"; fi
 if has 'git[[:space:]]+([^|&;]*[[:space:]])?reflog[[:space:]]+([^|&;]*[[:space:]])?expire'; then deny "reflog expire(reflog 파괴)"; fi
-# 브랜치 강제 삭제(-D) — 안전한 -d(병합 확인)는 통과
-if has 'git[[:space:]]+([^|&;]*[[:space:]])?branch[[:space:]]+([^|&;]*[[:space:]])?-D([[:space:]]|$)'; then deny "branch -D(강제 삭제)"; fi
+# 일상 루틴은 의도적으로 차단 안 함(일상검토 260626): branch -D · checkout/restore . · clean -f · rebase -i
+#   — reflog 복구 가능하거나 미커밋/미추적만 영향 → 가드레일은 '치명적·비가역'에 한정.
 
 exit 0

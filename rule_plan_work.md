@@ -46,3 +46,5 @@
 §6 antithesis도 Stop 훅으로 자동 환기(260626) — mark-work(편집 추적) + stop-antithesis(주요 작업 후 미실행 시 턴 종료 1회 차단·작업당 1회·`stop_hook_active`로 루프 방지·RPW 있는 프로젝트만). 룰에 "antithesis 자동 소환=허가된 spawn(묻지 말고 실행)" 명문화. 코호트 자동 위임은 판단 휴리스틱이라 별도 보류.
 
 독립 antithesis 1회로 강제층 자가검증(dogfood, 260626) — "불가" 판정에서 핵심 결함 3개 잡힘: Stop "작업당 1회"가 거짓(매 턴 재차단)·guard-secrets가 cat 외 awk/sed/python 우회 가능·guard-git이 rebase -i/clean -f 등 미탐. → 세션당 1회·READ_VERB 확장·파괴적 패턴 추가로 수정·재검증(37케이스 통과). 잔여(변수간접 우회·fail-open·글로벌 병합 시 경로 고정)는 셸훅 가드레일의 본질적 한계로 인정·문서화(README "위반 불가"→"가드레일"로 정정). 완전 차단이 필요한 항목은 Claude Code permission deny로 보강 권장(백로그).
+
+전역 설치 후 "일상 작업 안전성" 독립 검토(260626) → guard-git가 일상 루틴(`branch -D`·`checkout/restore .`·`clean -f`·`rebase -i`·`--force-with-lease`)을 과차단, guard-secrets가 `.key`·`.envrc`·`.env.d.ts`를 오차단함을 확인 → **완화**(가드레일을 '치명·비가역'에만 한정: force-push·reset --hard·filter-branch·update-ref -d·reflog expire·.env·자격증명만 차단). SessionStart도 RPW 게이트 추가(무관 프로젝트 미주입). 재검증 33/33, 맥미니 `~/.claude` 재설치 완료.
