@@ -27,9 +27,12 @@ dv=$(find "$cwd/datavault" -maxdepth 1 -name '*.md' ! -name 'INDEX.md' 2>/dev/nu
 
 # 물리 조건 → 후보 툴 목록(판단은 에이전트). 우선순위 상위 최대 2개만(과부하 방지, skill_activation 원칙 일치 — 안티테제 1-C).
 # 순위: antithesis > clemini하달 > RPW > Datavault.
+paper=0; [ -f "$dir/${sid}.paper" ] && paper=1
 cand=""; n=0
 addc(){ [ "$n" -lt 2 ] && { cand="${cand} · $1"; n=$((n+1)); }; }
-[ "$pending" -ge 3 ] && addc "antithesis(미검토편집 ${pending} — 독립검토 필요?)"
+[ "$pending" -ge 2 ] && addc "verify(수정 동작 확인했나?)"
+[ "$pending" -ge 3 ] && addc "antithesis(미검토편집 ${pending} — 독립검토?)"
+[ "$paper" = "1" ] && [ "$pending" -ge 2 ] && addc "paper(논문 파일 편집 — 컴파일·리뷰?)"
 [ "$research" -ge 4 ] && [ "$agy" -eq 0 ] && addc "clemini하달(조사 ${research}회 직접 — 웹조사까지 Cohort로?)"
 [ "$rpw" = "없음" ] && [ "$edits" -ge 2 ] && addc "RPW생성(상태 스냅샷 없음)"
 [ "$edits" -ge 5 ] && [ "$dv" -eq 0 ] && addc "Datavault(결정·패턴을 원자 노트로?)"

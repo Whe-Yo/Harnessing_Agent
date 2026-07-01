@@ -8,6 +8,8 @@ sid="$(printf '%s' "$input" | (jq -r '.session_id // "nosession"' 2>/dev/null ||
 dir="${HOME}/.claude/.harness_state"
 mkdir -p "$dir" 2>/dev/null
 find "$dir" -type f -mtime +7 -delete 2>/dev/null  # 오래된 세션 상태 정리
+fp="$(printf '%s' "$input" | (jq -r '.tool_input.file_path // empty' 2>/dev/null || echo ''))"
+printf '%s' "$fp" | grep -Eiq '\.(tex|bib)$' && : > "$dir/${sid}.paper" 2>/dev/null   # 논문 파일 편집 감지 → paper 자문
 ef="$dir/${sid}.edits"; ec=$(cat "$ef" 2>/dev/null || echo 0); case "$ec" in ''|*[!0-9]*) ec=0 ;; esac
 echo $((ec+1)) > "$ef" 2>/dev/null
 exit 0
