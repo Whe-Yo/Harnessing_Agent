@@ -25,12 +25,14 @@ elif [ -f "$cwd/work.md" ];          then rpw="있음(work.md)";
 else rpw="없음"; fi
 dv=$(find "$cwd/datavault" -maxdepth 1 -name '*.md' ! -name 'INDEX.md' 2>/dev/null | wc -l | tr -d ' '); case "$dv" in ''|*[!0-9]*) dv=0 ;; esac
 
-# 물리 조건 → 후보 툴 목록(판단은 에이전트)
-cand=""
-[ "$pending" -ge 3 ] && cand="${cand} · antithesis(미검토편집 ${pending} — 독립검토 필요?)"
-[ "$research" -ge 4 ] && [ "$agy" -eq 0 ] && cand="${cand} · clemini하달(조사 ${research}회 직접 — 웹조사까지 Cohort로 넘길 것?)"
-[ "$rpw" = "없음" ] && [ "$edits" -ge 2 ] && cand="${cand} · RPW생성(상태 스냅샷 없음)"
-[ "$edits" -ge 5 ] && [ "$dv" -eq 0 ] && cand="${cand} · Datavault(결정·패턴을 원자 노트로?)"
+# 물리 조건 → 후보 툴 목록(판단은 에이전트). 우선순위 상위 최대 2개만(과부하 방지, skill_activation 원칙 일치 — 안티테제 1-C).
+# 순위: antithesis > clemini하달 > RPW > Datavault.
+cand=""; n=0
+addc(){ [ "$n" -lt 2 ] && { cand="${cand} · $1"; n=$((n+1)); }; }
+[ "$pending" -ge 3 ] && addc "antithesis(미검토편집 ${pending} — 독립검토 필요?)"
+[ "$research" -ge 4 ] && [ "$agy" -eq 0 ] && addc "clemini하달(조사 ${research}회 직접 — 웹조사까지 Cohort로?)"
+[ "$rpw" = "없음" ] && [ "$edits" -ge 2 ] && addc "RPW생성(상태 스냅샷 없음)"
+[ "$edits" -ge 5 ] && [ "$dv" -eq 0 ] && addc "Datavault(결정·패턴을 원자 노트로?)"
 
 # 후보 있을 때만 '자문' 1줄 주입. 없으면 침묵.
 [ -n "$cand" ] && printf '[하네스 자문] 툴박스에 지금 쓸 것 있나?%s — 해당되면 실행(묻지 말고), 없으면 넘어가라.\n' "$cand"
