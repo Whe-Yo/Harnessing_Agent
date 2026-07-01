@@ -1,32 +1,25 @@
 #!/usr/bin/env bash
-# stop-antithesis.sh — §6 antithesis 자동화 (Stop 훅).
-# 주요 작업(파일 편집)이 있었는데 턴을 끝내려 하면 1회 막고 antithesis를 환기한다.
-# 무한루프 차단: (a) stop_hook_active=true면 통과, (b) 세션당 1회만(nudged 마커 — 한 번 환기 후 영구 통과).
-# 발동: 주요 작업(편집 3회↑) 후 독립검토 0회일 때 세션당 1회(RPW 존재 무관). bash 3.2 호환. 의존: jq.
+# stop-antithesis.sh — antithesis 게이트(Stop). 미검토 편집 pending(=edits-baseline) ≥3이면 턴 종료를 차단·환기.
+# 작업 묶음당 1회: baseline으로 pending 계산 → 구 .nudged '세션 영구 1회' 버그(안티테제 260701 문제 F) 제거.
+#   Task(서브에이전트=antithesis) 실행 시 track-tools가 baseline 리셋 → 다음 묶음에서 다시 발동.
+# 무한루프 차단: stop_hook_active + stopped_baseline(이 묶음에서 이미 막았으면 통과). bash 3.2 호환. jq 없어도 폴백.
 set -u
 input="$(cat)"
-
-# (a) 이미 한 번 막았으면 통과 — 루프 방지
-active="$(printf '%s' "$input" | jq -r '.stop_hook_active // false' 2>/dev/null)"
+active="$(printf '%s' "$input" | (jq -r '.stop_hook_active // false' 2>/dev/null || echo false))"
 [ "$active" = "true" ] && exit 0
-
-sid="$(printf '%s' "$input" | jq -r '.session_id // "nosession"' 2>/dev/null)"
+sid="$(printf '%s' "$input" | (jq -r '.session_id // "nosession"' 2>/dev/null || echo nosession))"
 [ -n "$sid" ] || sid=nosession
-
 dir="${HOME}/.claude/.harness_state"
-nudged="$dir/${sid}.nudged"
+rd(){ v=$(cat "$dir/${sid}.$1" 2>/dev/null || echo 0); case "$v" in ''|*[!0-9]*) v=0 ;; esac; echo "$v"; }
+edits=$(rd edits); baseline=$(rd baseline); stopped=$(rd stopped_baseline)
+pending=$(( edits - baseline )); [ "$pending" -lt 0 ] && pending=0
 
-# 발동 기준 = 주요 작업(편집 3회↑), RPW 존재 무관 (260701 B1: RPW 게이트가 실전 프로젝트서 antithesis를 꺼버렸다).
-edits=$(cat "$dir/${sid}.edits" 2>/dev/null || echo 0); case "$edits" in *[!0-9]*) edits=0 ;; esac
-[ "$edits" -ge 3 ] || exit 0
-# 이미 서브에이전트(독립검토 등) 돌았으면 통과
-review=$(cat "$dir/${sid}.review" 2>/dev/null || echo 0); case "$review" in *[!0-9]*) review=0 ;; esac
-[ "$review" -ge 1 ] && exit 0
-# 세션당 1회만 환기 — 이미 환기했으면 통과(매 턴 재차단·나그 방지)
-[ -f "$nudged" ] && exit 0
+[ "$pending" -ge 3 ] || exit 0
+# 이 작업 묶음(현 baseline)에서 이미 막았으면 통과 — 묶음당 1회
+[ -f "$dir/${sid}.stopped_baseline" ] && [ "$stopped" = "$baseline" ] && exit 0
+echo "$baseline" > "$dir/${sid}.stopped_baseline" 2>/dev/null
 
-touch "$nudged" 2>/dev/null
-reason="이번 세션에 파일 편집(주요 작업)이 있었다. 끝내기 전 §6 antithesis를 처리하라 — 독립 인스턴스(Agent 툴)로 RPW+변경분 1회 반론 검토를 '묻지 말고' 실행하거나, 사소한 변경이라 생략한다면 그 사유를 한 줄로 남겨라. (세션당 1회 환기.)"
+reason="이번 작업 묶음에 미검토 편집 ${pending}회. 끝내기 전 §6 antithesis를 처리하라 — 독립 인스턴스(Agent 툴)로 1회 반론 검토를 '묻지 말고' 실행(그러면 자동 해제), 또는 사소하면 생략 사유 한 줄. (작업 묶음당 1회.)"
 jq -n --arg r "$reason" '{decision:"block", reason:$r}' 2>/dev/null \
-  || printf '{"decision":"block","reason":"주요 작업 후 antithesis를 실행하거나 생략 사유를 남겨라."}\n'
+  || printf '{"decision":"block","reason":"미검토 편집이 쌓였다 — antithesis를 실행하거나 생략 사유를 남겨라."}\n'
 exit 0
