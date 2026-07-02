@@ -26,7 +26,9 @@ else rpw="없음"; fi
 dv=$(find "$cwd/datavault" -maxdepth 1 -name '*.md' ! -name 'INDEX.md' 2>/dev/null | wc -l | tr -d ' '); case "$dv" in ''|*[!0-9]*) dv=0 ;; esac
 
 # 물리 조건 → 후보 툴 목록(판단은 에이전트). 우선순위 상위 최대 2개만(과부하 방지, skill_activation 원칙 일치 — 안티테제 1-C).
-# 순위: antithesis > clemini하달 > RPW > Datavault.
+# 순위: verify > antithesis > paper > clemini하달 > RPW > Datavault.
+# 알려진 한계: verify·antithesis가 같은 신호(pending) 파생이라 pending≥3인 동안 두 슬롯을 점유 —
+#   단 antithesis 실행 시 baseline 리셋으로 슬롯이 비므로 기아는 '검토를 계속 미루는 세션'에서만 지속(260702 안티테제).
 paper=0; [ -f "$dir/${sid}.paper" ] && paper=1
 cand=""; n=0
 addc(){ [ "$n" -lt 2 ] && { cand="${cand} · $1"; n=$((n+1)); }; }

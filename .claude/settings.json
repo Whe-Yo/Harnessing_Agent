@@ -1,5 +1,5 @@
 {
-  "$comment": "please-work-claude 강제/가시성 층 템플릿. setup이 이 hooks 블록을 사용자 ~/.claude/settings.json(또는 프로젝트 .claude/settings.json)에 병합하고 command 경로의 ${CLAUDE_PROJECT_DIR}를 실제 설치 경로로 치환한다. PreToolUse=하드 차단(exit 2), Stop=antithesis 게이트, UserPromptSubmit=매 턴 프로세스 상태 주입(260701 가시성), PostToolUse=상태 카운터.",
+  "$comment": "please-work-claude 강제/가시성 층 템플릿. setup이 이 hooks 블록을 사용자 ~/.claude/settings.json(또는 프로젝트 .claude/settings.json)에 병합하고 command 경로의 ${CLAUDE_PROJECT_DIR}를 실제 설치 경로로 치환한다. PreToolUse=하드 차단(exit 2), Stop=antithesis 게이트, UserPromptSubmit=매 턴 프로세스 상태 주입(260701 가시성), PostToolUse=상태 카운터(성공한 도구만 — mark-work가 PostToolUse인 이유, 260702).",
   "hooks": {
     "PreToolUse": [
       {
@@ -13,15 +13,15 @@
         "hooks": [
           { "type": "command", "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/guard-git.sh" }
         ]
-      },
+      }
+    ],
+    "PostToolUse": [
       {
         "matcher": "Edit|Write|NotebookEdit",
         "hooks": [
           { "type": "command", "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/mark-work.sh" }
         ]
-      }
-    ],
-    "PostToolUse": [
+      },
       {
         "matcher": "Bash|Task|WebSearch|WebFetch",
         "hooks": [

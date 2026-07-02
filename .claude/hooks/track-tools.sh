@@ -10,17 +10,23 @@ tool="$(printf '%s' "$input" | (jq -r '.tool_name // empty' 2>/dev/null || echo 
 dir="${HOME}/.claude/.harness_state"; mkdir -p "$dir" 2>/dev/null
 rd(){ v=$(cat "$dir/${sid}.$1" 2>/dev/null || echo 0); case "$v" in ''|*[!0-9]*) v=0 ;; esac; echo "$v"; }
 inc(){ echo $(( $(rd "$1") + 1 )) > "$dir/${sid}.$1" 2>/dev/null; }
+# antithesis 시그니처(ack 판정). 알려진 한계: 키워드 기반이라 안티테제에 '관한' 조사도 ack될 수 있다(거짓 양성) —
+#   결과 반영 여부까지는 추적 불가(작업완료 마커 재프레임은 백로그).
+SIG='antithesis|안티테제|반론 검토|독립 검토자|독립 인스턴스'
 case "$tool" in
   Task)
-    inc review
     # antithesis Task일 때만 baseline 리셋(=검토 ack). 다른 서브에이전트(Explore·구현 위임)는 리셋 안 함.
     tp="$(printf '%s' "$input" | (jq -r '.tool_input.prompt // .tool_input.description // empty' 2>/dev/null || echo ''))"
-    printf '%s' "$tp" | grep -Eqi 'antithesis|안티테제|반론 검토|독립 검토자|독립 인스턴스' && echo "$(rd edits)" > "$dir/${sid}.baseline" 2>/dev/null
+    printf '%s' "$tp" | grep -Eqi "$SIG" && echo "$(rd edits)" > "$dir/${sid}.baseline" 2>/dev/null
     ;;
   WebSearch|WebFetch) inc research ;;
   Bash)
     cmd="$(printf '%s' "$input" | (jq -r '.tool_input.command // empty' 2>/dev/null || echo ''))"
-    if printf '%s' "$cmd" | grep -Eq '(agy|delegate\.sh|delegate-fanout\.sh)'; then inc agy; echo 0 > "$dir/${sid}.research" 2>/dev/null; fi
+    if printf '%s' "$cmd" | grep -Eq '(agy|delegate\.sh|delegate-fanout\.sh)'; then
+      inc agy; echo 0 > "$dir/${sid}.research" 2>/dev/null
+      # agy 경유 검토(--deep 오프로드 등)도 ack — clemini '이원 안티테제'와 정합(260702: 거짓 음성 수정).
+      printf '%s' "$cmd" | grep -Eqi "$SIG" && echo "$(rd edits)" > "$dir/${sid}.baseline" 2>/dev/null
+    fi
     ;;
 esac
 exit 0

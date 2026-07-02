@@ -5,11 +5,29 @@
 업데이트 확인(`manage`의 일일 점검)은 이 파일과 git 태그를 기준점으로 삼을 수 있다.
 
 ## [Unreleased]
+
+## [0.3.0] - 260702
+강제층 실물화 → 가시성층(하이브리드 자문) → Datavault. "언급할 때만 쓰임" 문제의 구조적 해소 릴리스. (0.2.0 이후 260618~260702 누적분 — CHANGELOG 미기재 방치를 260702 안티테제가 적발, 소급 정리.)
+
 ### Added
-- **능동 피드백 규칙**: `rules/CLAUDE.md` 6절에 "하네스 실사용 중 버그·마찰·개선점 발견 시 사용자 지시 없이도 `feedback` 스킬로 `log_for_test/`에 즉시 기록" 능동 지침 추가. WHY: 다른 세션이 침묵하면 같은 결함이 반복 — 하네스는 실사용 마찰을 모아야 개선된다.
+- **강제층 실물화(260626)**: `.claude/settings.json` + 훅 — `guard-secrets`(.env·자격증명 읽기 차단, jq fail-closed+절대경로 폴백), `guard-git`(force-push·`reset --hard`·history rewrite 차단, 인용구간 제외), `session-start-boost`(세션 시작 boost 환기), `stop-antithesis`(주요 작업 후 antithesis 미실행 시 턴 종료 1회 차단). 독립 안티테제 3라운드(dogfood·일상 안전성·외부 피드백)로 우회·과차단·fail-open 교정.
+- **가시성층(260701)**: `mark-work`(편집 카운터)·`track-tools`(조사·하달 카운터, antithesis ack)·`process-status`(매 턴 조건부 **하이브리드 자문** — 물리 조건 충족 시 "툴박스에 지금 쓸 것 있나?" 후보 최대 2개, clean이면 침묵). Stop 게이트를 작업 묶음(baseline/pending) 방식으로 재작성(세션 영구 무력화 버그 제거).
+- **`rules/skill_activation.md`**: 기능별 발동 기준표(하드/소프트 자문/판단) — verify·paper 자문 편입, review(중복)·manage(비용>이득) 제외 확정.
+- **`rules/datavault.md` + `datavault/` 개시**: RPW(현재 스냅샷)/Datavault(누적 원자노트 그래프)/git(변경사실) 3층 역할 분리. 첫 노트 2건(install-doc-drift 안티패턴, counters-posttooluse 결정)으로 실증 개시.
+- **RPW 에피그래프**: "Knowledge is power, guard it well" — 템플릿에 명문화.
+- **능동 피드백 규칙**: `rules/CLAUDE.md` 6절 — 하네스 실사용 중 마찰 발견 시 사용자 지시 없이 `log_for_test/`에 즉시 기록. WHY: 다른 세션이 침묵하면 같은 결함이 반복된다.
+
 ### Fixed
+- **[치명] setup 훅 복사 목록 드리프트(260702 안티테제)**: setup이 훅 5종만 나열해 신규 설치에서 카운터·자문층이 침묵 사망 → **글롭 복사(`*.sh` 전부) + settings.json 참조 대조 + 가시성층 기능 검증 게이트** 추가.
+- **mark-work를 PostToolUse로 이동(260702)**: PreToolUse는 거부·실패한 편집도 +1 — 성공한 편집만 계측.
+- **agy 경유 안티테제 ack(260702)**: `--deep`(agy Opus) 오프로드 검토가 baseline을 리셋하지 않던 거짓 음성 수정 — clemini '이원 안티테제'와 정합.
+- **문서 부패 일괄(260702)**: process-status 우선순위 주석·session-start-boost "Stop 훅과 일관" 구버전 서술·datavault.md "매 턴 노출" 과장 정정. 상태 GC 7→30일(장수 세션 baseline 오삭제 방지). 미사용 `review` 카운터(dead write) 제거.
 - **SKILL_INDEX feedback 설명 정정**(피드백 260623_1819 DOC-1): "GitHub 이슈로 보고" → "`log_for_test/`에 md 기록·커밋", 트리거 "피드백 남겨"로 정렬.
-- **삭제제한 마운트 대응**(피드백 260623_1819 FRICTION-1): `feedback` 스킬 6절에 잔존 `.git/index.lock` 제거 후 md 출력 폴백 절차 추가. 정체 락 제거로 클론 git wedge 해소.
+- **삭제제한 마운트 대응**(피드백 260623_1819 FRICTION-1): `feedback` 스킬 6절에 잔존 `.git/index.lock` 제거 후 md 출력 폴백 절차 추가.
+
+### Changed
+- **README 전면 재작성(260702)**: 스타일 통일 — `[ 제목 ]` 섹션, 담백한 서술, 한국어 본문 + 영어 미러. 내용 최신화 — 훅 5종→7종(가시성층 편입), 하이브리드 자문, 세 겹의 기억(RPW/Datavault/git), skill_activation 참조.
+
 ### Removed
 - 잘못 보관됐던 clemini 대상 피드백(260618_1605)을 clemini `log_for_test/`로 이전(중복 제거).
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # session-start-boost.sh — §7 강제 보강: 세션 시작 시 boost 리마인드 주입.
 # SessionStart는 도구 차단을 못 한다 → 컨텍스트 주입으로 "가장 먼저 boost" 규칙을 환기한다.
-# RPW 있는 하네스 관리 프로젝트에서만 주입(무관 프로젝트 오염 방지 — Stop 훅과 일관). 의존: jq.
+# RPW 있는 프로젝트에서만 주입(무관 프로젝트 오염 방지). Stop 게이트·자문층은 의도적으로 전역 발동(260701) — 이 훅만 RPW 게이트. 의존: jq.
 set -u
 input="$(cat 2>/dev/null)"
 cwd="$(printf '%s' "$input" | jq -r '.cwd // empty' 2>/dev/null)"
